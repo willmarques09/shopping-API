@@ -16,13 +16,11 @@ export class CreateProducts1658325455090 implements MigrationInterface {
           },
           {
             name: 'price', // preço
-            type: 'decimal',
-            precision: 10, // valor inteiro
-            scale: 2, // valor depois da virgula
+            type: 'numeric',
           },
           {
             name: 'quantity', // quantidade
-            type: 'int',
+            type: 'numeric',
           },
           {
             name: 'created_at',

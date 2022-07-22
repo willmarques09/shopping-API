@@ -8,10 +8,10 @@ import ShowProductService from '../services/ShowProductService';
 import UpdateProductService from '../services/UpdateProductService';
 
 class ProductsContoller {
-  public async execute(req: Request, res: Response) {
+  public async list(req: Request, res: Response) {
     const listProducts = new ListProductService();
 
-    const product = await listProducts.execute();
+    const product = await listProducts.list();
 
     return res.json(product);
   }

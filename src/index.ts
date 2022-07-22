@@ -1,12 +1,12 @@
-import 'reflect-metadata';
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import 'reflect-metadata';
 import cors from 'cors';
 import express from 'express';
 
+import './database';
 import 'express-async-errors';
 import AppError from './errors';
 import routes from './routes';
-import './database';
 
 const app = express();
 
@@ -25,7 +25,7 @@ app.use((error, req, res, next) => {
   }
   return res.status(500).json({
     status: 'error',
-    message: 'internal server error',
+    message: error,
   });
 });
 

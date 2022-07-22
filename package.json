@@ -8,7 +8,7 @@
     "start": "tsc && node build/server.js",
     "dev": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules --respawn src/server.ts",
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js",
-    "oba": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules --respawn src/server.ts && npm typeorm migration:run"
+    "oba": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules --respawn src/server.ts && yarn typeorm migration:run"
   },
   "repository": {
     "type": "git",
@@ -40,7 +40,7 @@
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
     "socket.io": "^4.5.1",
-    "sqlite3": "^5.0.2",
+    "sqlite": "^4.1.2",
     "swagger-ui-express": "^4.4.0",
     "typeorm": "^0.2.32",
     "uuid": "^8.3.2"

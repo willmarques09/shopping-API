@@ -1,0 +1,11 @@
+###
+POST http://localhost:3333/products
+Content-Type: application/json
+
+{
+  "name": "book 1",
+	"price": 20,
+	"quantity": 5
+}
+###
+
