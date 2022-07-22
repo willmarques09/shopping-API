@@ -1,13 +1,11 @@
 import { Router } from 'express';
 
 import productsRouter from './products';
+import usersRouter from './users';
 
 const routes = Router();
 
 routes.use('/products', productsRouter);
-
-routes.get('/', (req, res) => {
-  return res.json({ message: 'funciona Obaa' });
-});
+routes.use('/users', usersRouter);
 
 export default routes;

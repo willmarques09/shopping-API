@@ -1,3 +1,4 @@
+/* eslint-disable import-helpers/order-imports */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import 'reflect-metadata';
 import cors from 'cors';
@@ -5,6 +6,8 @@ import express from 'express';
 
 import './database';
 import 'express-async-errors';
+import { errors } from 'celebrate';
+
 import AppError from './errors';
 import routes from './routes';
 
@@ -14,6 +17,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use(routes);
+
+app.use(errors());
 
 // eslint-disable-next-line consistent-return
 app.use((error, req, res, next) => {

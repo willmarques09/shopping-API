@@ -1,8 +1,7 @@
 import { getCustomRepository } from 'typeorm';
 
-import Product from '../entities/Product';
-import AppError from '../errors';
-import { ProductRepository } from '../repositories/ProductsRepository';
+import AppError from '../../errors';
+import { ProductRepository } from '../../repositories/ProductsRepository';
 
 interface IRequest {
   id: string;
@@ -11,18 +10,13 @@ interface IRequest {
   quantity: number;
 }
 class UpdateProductService {
-  public async execute({
-    id,
-    name,
-    price,
-    quantity,
-  }: IRequest): Promise<Product> {
+  public async update({ id, name, price, quantity }: IRequest) {
     const ProductsRepository = getCustomRepository(ProductRepository);
 
     const product = await ProductsRepository.findOne(id);
 
     if (!product) {
-      throw new AppError('product not found');
+      throw new AppError('product not found', 404);
     }
 
     const productExists = ProductsRepository.findOne(name);

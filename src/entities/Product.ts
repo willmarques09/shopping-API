@@ -7,24 +7,24 @@ import {
 } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
-@Entity('products')
+@Entity('products') // incicializando uma entidade que recebe na migration, se comunica com banco de dados tipando
 class Product {
-  @PrimaryColumn()
+  @PrimaryColumn() // id e uma chave primaria
   id: string;
 
-  @Column()
+  @Column() // nome e uma coluna tipado com string
   name: string;
 
-  @Column()
+  @Column() // price e uma coluna tipada como numero
   price: number;
 
-  @Column()
+  @Column() // quantity e uma coluna tipada como numero
   quantity: number;
 
-  @CreateDateColumn()
+  @CreateDateColumn() // CreateDateColumn tipa como data
   created_at: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn() // UpdateDateColumn tipa como data
   updated_at: Date;
 
   constructor() {
