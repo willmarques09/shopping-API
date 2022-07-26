@@ -1,3 +1,14 @@
-import { createConnection } from 'typeorm';
+import { createConnection, getConnectionOptions } from 'typeorm';
 
-createConnection(); // Cria a coneção com o banco de dados
+interface IOptions {
+  host: string;
+}
+
+getConnectionOptions().then(options => {
+  const newOptions = options as IOptions;
+  newOptions.host = 'database'; // Nome dado ao service do banco de dados
+  // Cria a coneção com o banco de dados
+  createConnection({
+    ...options,
+  });
+});

@@ -1,10 +1,10 @@
 import {
   Column,
+  Entity,
   CreateDateColumn,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Entity } from 'typeorm/decorator/entity/Entity';
 import { v4 as uuid } from 'uuid';
 
 @Entity('user_tokens')
