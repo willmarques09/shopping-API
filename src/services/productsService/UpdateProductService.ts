@@ -11,25 +11,27 @@ interface IRequest {
 }
 class UpdateProductService {
   public async update({ id, name, price, quantity }: IRequest) {
-    const ProductsRepository = getCustomRepository(ProductRepository);
+    const productsRepository = getCustomRepository(ProductRepository);
 
-    const product = await ProductsRepository.findOne(id);
+    const product = await productsRepository.findOne({ id });
+    const productExists = await productsRepository.findOne({ name });
 
     if (!product) {
       throw new AppError('product not found', 404);
     }
 
-    const productExists = ProductsRepository.findOne(name);
+    if (productExists && product.name !== name) {
+      console.log(`${product.name} aeeeeaeee euuu aki`);
+      console.log(`${productExists}   AAAAAbo`);
 
-    if (productExists && name !== product.name) {
-      throw new AppError('there is already one product with this name');
+      throw new AppError('there is already one product with this name', 409);
     }
 
     product.name = name;
     product.price = price;
     product.quantity = quantity;
 
-    await ProductsRepository.save(product);
+    await productsRepository.save(product);
 
     return product;
   }

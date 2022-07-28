@@ -1,14 +1,15 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import {
   Column,
-  Entity,
   CreateDateColumn,
+  Entity,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 @Entity('customers')
-class Customers {
+export default class CustomersEntitie {
   @PrimaryColumn()
   id: string;
 
@@ -26,9 +27,7 @@ class Customers {
 
   constructor() {
     if (!this.id) {
-      this.id = uuid(); // gera um id primario
+      this.id = uuid();
     }
   }
 }
-
-export default Customers;

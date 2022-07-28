@@ -1,12 +1,9 @@
 import { Router } from 'express';
 
-import { ProductsContoller } from '../../Controllers/ProductsController';
-import isAuthenticated from '../users/isAuthenticated';
+import { CustomerContoller } from '../../Controllers/customerController';
 
 const customersRouter = Router();
-const customersContoller = new ProductsContoller();
-
-customersRouter.use(isAuthenticated);
+const customersContoller = new CustomerContoller();
 
 customersRouter.get('/', customersContoller.list); // faz a listagem de todos os produtos
 
