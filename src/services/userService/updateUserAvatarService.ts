@@ -1,36 +1,42 @@
 import fs from 'fs';
 import path from 'path';
-import { getCustomRepository } from 'typeorm';
+import { inject, injectable } from 'tsyringe';
 
-import uploadConfig from '../../config/upload';
+import upload from '../../config/upload';
 import AppError from '../../errors';
-import { UserRepository } from '../../repositories/UsersRepositoty';
+import { IUsersRepository } from '../../interface/IUsers';
 
-interface IRequest {
-  id: string; // IResquest esta fazendo uma tipagem
+interface IUsers {
+  id: string;
   avatar: string;
 }
 
+@injectable()
 class UpdateUserAvatarService {
-  public async updateAvatar({ id, avatar }: IRequest) {
-    const userRepository = getCustomRepository(UserRepository);
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
+  ) {}
 
-    const user = await userRepository.findOne({ id });
+  async updateAvatar({ id, avatar }: IUsers) {
+    const user = await this.usersRepository.findById(id);
 
     if (!user) {
-      throw new AppError('User not found.');
+      throw new AppError('User not found', 404);
     }
-    if (user.avatar) {
-      const userAvatarFilePath = path.join(uploadConfig.directory, user.avatar);
-      const userAvatarFileExists = await fs.promises.stat(userAvatarFilePath);
 
-      if (userAvatarFileExists) {
-        await fs.promises.unlink(userAvatarFilePath);
+    if (user.avatar) {
+      const userAvatarFilePath = path.join(upload.directory, user.avatar); // Vai passar a informação de onde encontrar o arquivo
+      const userAvatarExists = await fs.promises.stat(userAvatarFilePath); // Verifica se o arquivo existe
+
+      if (userAvatarExists) {
+        await fs.promises.unlink(userAvatarFilePath); // Se existir vai remover
       }
     }
+
     user.avatar = avatar;
 
-    await userRepository.save(user);
+    await this.usersRepository.save(user);
 
     return user;
   }

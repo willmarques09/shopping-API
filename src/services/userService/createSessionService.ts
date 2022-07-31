@@ -1,21 +1,24 @@
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
-import { getCustomRepository } from 'typeorm';
+import { inject, injectable } from 'tsyringe';
 
 import autConfig from '../../config/auth';
 import AppError from '../../errors';
-import { UserRepository } from '../../repositories/UsersRepositoty';
+import { IHashProvider } from '../../interface/IHash';
+import { IUsersRepository } from '../../interface/IUsers';
+import { ISession } from '../../interface/IUserToken';
 
-interface IRequest {
-  // IResquest esta fazendo uma tipagem
-  email: string;
-  password: string;
-}
-
+@injectable()
 class CreateSessionService {
-  public async create({ email, password }: IRequest) {
-    const userRepository = getCustomRepository(UserRepository);
-    const user = await userRepository.findOne({ email });
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
+    @inject('HashProvider')
+    private hashProvider: IHashProvider,
+  ) {}
+
+  public async create({ email, password }: ISession) {
+    const user = await this.usersRepository.findByEmail(email);
 
     if (!user) {
       throw new AppError('incorrect email/password combination.', 401);

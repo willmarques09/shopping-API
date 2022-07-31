@@ -1,10 +1,13 @@
 /* eslint-disable import-helpers/order-imports */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { pagination } from 'typeorm-pagination';
 import 'reflect-metadata';
+import './container';
 import cors from 'cors';
 import express from 'express';
 
 import './database';
+
 import 'express-async-errors';
 import { errors } from 'celebrate';
 
@@ -16,6 +19,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(pagination);
 app.use('/files', express.static(uploadConfing.directory));
 
 app.use(routes);

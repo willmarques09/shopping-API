@@ -1,21 +1,23 @@
-import { getCustomRepository } from 'typeorm';
+import { inject, injectable } from 'tsyringe';
 
 import AppError from '../../errors';
-import { UserRepository } from '../../repositories/UsersRepositoty';
+import { IUsersRepository } from '../../interface/IUsers';
 
-interface IResquest {
-  user_id: string;
-}
+@injectable()
 class ShowProfileService {
-  public async updateProfile({ user_id }: IResquest) {
-    const userRepository = getCustomRepository(UserRepository); // repositorio costumizado
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
+  ) {}
 
-    const user = await userRepository.findOne(user_id); // lista todos os produtos
+  async showProfile(id: string) {
+    const usersExists = await this.usersRepository.findById(id);
 
-    if (!user) {
-      throw new AppError('Use not found');
+    if (!usersExists) {
+      throw new AppError('User not found', 404);
     }
-    return user;
+
+    return usersExists;
   }
 }
 export default ShowProfileService;

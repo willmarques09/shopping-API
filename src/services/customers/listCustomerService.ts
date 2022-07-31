@@ -1,14 +1,26 @@
-import { getCustomRepository } from 'typeorm';
+import { inject, injectable } from 'tsyringe';
 
-import { CustomersRepository } from '../../repositories/customersRepository';
+import { ICustomersRepository, ISearchParams } from '../../interface/ICustomer';
 
+@injectable()
 class ListCustomerService {
-  public async list() {
-    const customersRepository = getCustomRepository(CustomersRepository); // repositorio costumizado
+  constructor(
+    @inject('CustomersRepository')
+    private customersRepository: ICustomersRepository,
+  ) {}
 
-    const customers = await customersRepository.find(); // lista todos os produtos
+  public async list({ page, limit }: ISearchParams) {
+    const take = limit;
+    const skip = (Number(page) - 1) * take;
 
-    return customers;
+    const listCustom = await this.customersRepository.findAll({
+      page,
+      skip,
+      take,
+    });
+
+    return listCustom;
   }
 }
+
 export default ListCustomerService;

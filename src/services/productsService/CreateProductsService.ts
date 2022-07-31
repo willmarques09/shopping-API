@@ -1,23 +1,17 @@
-import { getCustomRepository, Repository } from 'typeorm';
+import { inject, injectable } from 'tsyringe';
 
-import Product from '../../entities/productsEntitie';
 import AppError from '../../errors';
-import { ProductRepository } from '../../repositories/ProductsRepository';
+import { ICreateProduct } from '../../interface/IProducts/interfaces';
+import { IProductsRepository } from '../../interface/IProducts/IProducts';
 
-interface IRequest {
-  name: string; // IResquest esta fazendo uma tipagem
-  price: number;
-  quantity: number;
-}
-
+@injectable()
 class CreateProductService {
-  private productsRepository: Repository<Product>;
-
-  constructor() {
-    this.productsRepository = getCustomRepository(ProductRepository); // toda vez que usar classe privada deve se usar (this)
-  }
-  async create({ name, price, quantity }: IRequest) {
-    const productExists = await this.productsRepository.findOne({ name }); // this serve para chamat o constructor
+  constructor(
+    @inject('ProductRepository')
+    private productsRepository: IProductsRepository,
+  ) {}
+  async create({ name, price, quantity }: ICreateProduct) {
+    const productExists = await this.productsRepository.findByName(name); // this serve para chamat o constructor
 
     if (productExists) {
       throw new AppError('there is already one product with this name', 409);

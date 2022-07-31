@@ -1,22 +1,23 @@
-import { getCustomRepository } from 'typeorm';
+import { inject, injectable } from 'tsyringe';
 
 import AppError from '../../errors';
-import { ProductRepository } from '../../repositories/ProductsRepository';
+import { IProductsRepository } from '../../interface/IProducts/IProducts';
 
-interface IRequest {
-  id: string; // boas pratica tipar com interface IRequest
-}
+@injectable()
 class DeleteProductService {
-  public async delete({ id }: IRequest): Promise<void> {
-    const ProductsRepository = getCustomRepository(ProductRepository); // repositorio costumizado
+  constructor(
+    @inject('ProductRepository')
+    private productsRepository: IProductsRepository,
+  ) {}
 
-    const product = await ProductsRepository.findOne(id); // findOne buscar o id
+  public async delete(id: string): Promise<void> {
+    const product = await this.productsRepository.findById(id); // findOne buscar o id
 
     if (!product) {
       throw new AppError('product not found', 404);
     }
 
-    await ProductsRepository.remove(product);
+    await this.productsRepository.remove(product);
   }
 }
 export default DeleteProductService;

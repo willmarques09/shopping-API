@@ -1,18 +1,17 @@
-import { getCustomRepository, Repository } from 'typeorm';
+import { inject, injectable } from 'tsyringe';
 
-import OrdersEntitie from '../../entities/orderEntitie';
 import AppError from '../../errors';
-import OrdersRepository from '../../repositories/ordersRepository';
+import { IOrdersRepository } from '../../interface/IOrder';
 
+@injectable()
 class ListOrderService {
-  private orderRepository: Repository<OrdersEntitie>;
-
-  constructor() {
-    this.orderRepository = getCustomRepository(OrdersRepository);
-  }
+  constructor(
+    @inject('OrdersRepository')
+    private ordersRepository: IOrdersRepository,
+  ) {}
 
   async list(id: string) {
-    const order = await this.orderRepository.findOne(id);
+    const order = await this.ordersRepository.findById(id);
 
     if (!order) {
       throw new AppError('Order not found.');

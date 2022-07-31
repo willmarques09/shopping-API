@@ -1,19 +1,23 @@
 import { hash } from 'bcryptjs';
+import { inject, injectable } from 'tsyringe';
 import { getCustomRepository } from 'typeorm';
 
 import AppError from '../../errors';
-import { UserRepository } from '../../repositories/UsersRepositoty';
+import { IHashProvider } from '../../interface/IHash';
+import { ICreateUser, IUsersRepository } from '../../interface/IUsers';
+import { UserRepository } from '../../repositories/UsersRepository';
 
-interface IRequest {
-  name: string; // IResquest esta fazendo uma tipagem
-  email: string;
-  password: string;
-}
-
+@injectable()
 class CreateUserService {
-  public async create({ name, email, password }: IRequest) {
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
+    @inject('HashProvider')
+    private hashProvider: IHashProvider,
+  ) {}
+  public async create({ name, email, password }: ICreateUser) {
     const userRepository = getCustomRepository(UserRepository);
-    const emailExists = await userRepository.findOne({ email });
+    const emailExists = await this.usersRepository.findByEmail(email);
     if (emailExists) {
       throw new AppError('email address already used');
     }

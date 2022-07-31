@@ -1,56 +1,57 @@
 import { compare, hash } from 'bcryptjs';
-import { getCustomRepository } from 'typeorm';
+import { inject, injectable } from 'tsyringe';
 
-import AppError from '../../errors';
-import { UserRepository } from '../../repositories/UsersRepositoty';
+import AppError from '../../errors/index';
+import { IUsersRepository } from '../../interface/IUsers';
 
-interface IResquest {
+interface IUser {
   user_id: string;
   name: string;
   email: string;
   password?: string;
-  old_password?: string;
+  old_password?: string; // Envia a senha anterior para poder atualizad
 }
-class UpdateProfileService {
-  public async updateProfile({
-    user_id,
-    name,
-    email,
-    password,
-    old_password,
-  }: IResquest) {
-    const userRepository = getCustomRepository(UserRepository); // repositorio costumizado
 
-    const user = await userRepository.findOne(user_id); // lista todos os produtos
+@injectable()
+class UpdateProfileService {
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
+  ) {}
+
+  async updateProfile({ user_id, name, email, password, old_password }: IUser) {
+    const user = await this.usersRepository.findById(user_id);
+    const userUpdate = await this.usersRepository.findByEmail(email);
 
     if (!user) {
-      throw new AppError('Use not found');
+      throw new AppError('User not found', 404);
     }
 
-    const userUpdateEmail = await userRepository.findOne({ email });
-
-    if (userUpdateEmail && userUpdateEmail.id !== user_id) {
-      throw new AppError('There is already one user with this email.');
+    if (userUpdate && userUpdate.id !== user_id) {
+      // Verifica se o email já existe é diferente do nosso id
+      throw new AppError('There is already one user with this email', 409);
     }
 
     if (password && !old_password) {
-      throw new AppError('Old password is required.');
+      throw new AppError('Old password is required');
     }
 
     if (password && old_password) {
       const checkOldPassword = await compare(old_password, user.password);
 
       if (!checkOldPassword) {
-        throw new AppError('Old password does not match.');
+        throw new AppError('Old password does not correct');
       }
+
       user.password = await hash(password, 8);
     }
+
     user.name = name;
     user.email = email;
 
-    await userRepository.save(user);
+    const updateProfile = await this.usersRepository.save(user);
 
-    return user;
+    return updateProfile;
   }
 }
 export default UpdateProfileService;

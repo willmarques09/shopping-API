@@ -1,16 +1,16 @@
-import { getCustomRepository } from 'typeorm';
+import { inject, injectable } from 'tsyringe';
 
 import AppError from '../../errors';
-import { CustomersRepository } from '../../repositories/customersRepository';
+import { ICustomersRepository } from '../../interface/ICustomer';
 
-interface IResquest {
-  id: string;
-}
+@injectable()
 class ShowCustomerService {
-  public async listById({ id }: IResquest) {
-    const customersRepository = getCustomRepository(CustomersRepository); // repositorio costumizado
-
-    const customer = await customersRepository.findOne({ id }); // lista todos os produtos
+  constructor(
+    @inject('CustomersRepository')
+    private customersRepository: ICustomersRepository,
+  ) {}
+  public async listById(id: string) {
+    const customer = await this.customersRepository.findById(id); // lista todos os produtos
 
     if (!customer) {
       throw new AppError('Customer not found.', 404);

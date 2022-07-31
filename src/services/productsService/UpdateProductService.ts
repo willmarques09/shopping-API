@@ -1,29 +1,25 @@
-import { getCustomRepository } from 'typeorm';
+import { inject, injectable } from 'tsyringe';
 
 import AppError from '../../errors';
-import { ProductRepository } from '../../repositories/ProductsRepository';
+import { IUpdateProduct } from '../../interface/IProducts/interfaces';
+import { IProductsRepository } from '../../interface/IProducts/IProducts';
 
-interface IRequest {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
+injectable();
 class UpdateProductService {
-  public async update({ id, name, price, quantity }: IRequest) {
-    const productsRepository = getCustomRepository(ProductRepository);
+  constructor(
+    @inject('ProductRepository')
+    private productsRepository: IProductsRepository,
+  ) {}
 
-    const product = await productsRepository.findOne({ id });
-    const productExists = await productsRepository.findOne({ name });
+  public async update({ id, name, price, quantity }: IUpdateProduct) {
+    const product = await this.productsRepository.findById(id);
+    const productExists = await this.productsRepository.findByName(name);
 
     if (!product) {
       throw new AppError('product not found', 404);
     }
 
     if (productExists && product.name !== name) {
-      console.log(`${product.name} aeeeeaeee euuu aki`);
-      console.log(`${productExists}   AAAAAbo`);
-
       throw new AppError('there is already one product with this name', 409);
     }
 
@@ -31,7 +27,7 @@ class UpdateProductService {
     product.price = price;
     product.quantity = quantity;
 
-    await productsRepository.save(product);
+    await this.productsRepository.save(product);
 
     return product;
   }
