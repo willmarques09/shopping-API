@@ -4,7 +4,7 @@ import AppError from '../../errors';
 import { IUpdateProduct } from '../../interface/IProducts/interfaces';
 import { IProductsRepository } from '../../interface/IProducts/IProducts';
 
-injectable();
+@injectable()
 class UpdateProductService {
   constructor(
     @inject('ProductRepository')

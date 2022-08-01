@@ -24,7 +24,7 @@ class CreateOrderService {
     @inject('CustomersRepository')
     private customRepository: ICustomersRepository,
 
-    @inject('ProductsRepository')
+    @inject('ProductRepository')
     private productRepository: IProductsRepository,
   ) {}
 
@@ -80,7 +80,7 @@ class CreateOrderService {
     }));
 
     // Passa os dados que precisa para criar o registro
-    const order = this.ordersRepository.create({
+    const order = await this.ordersRepository.create({
       customer: customerExists,
       products: serializedProducts,
     });
@@ -95,7 +95,7 @@ class CreateOrderService {
         product.quantity,
     }));
 
-    await this.productRepository.save(updatedProductQuantity);
+    await this.productRepository.updateStock(updatedProductQuantity);
 
     return order;
   }

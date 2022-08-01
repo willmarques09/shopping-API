@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
+import AppError from '../../errors';
 import { ISearchParams } from '../../interface/ICustomer';
 import { IUsersRepository } from '../../interface/IUsers';
 
@@ -18,6 +19,15 @@ class ListUserService {
       skip,
       take,
     });
+    return listUsers;
+  }
+  async listById(id: string) {
+    const listUsers = await this.usersRepository.findById(id);
+
+    if (!listUsers) {
+      throw new AppError('User not found', 404);
+    }
+
     return listUsers;
   }
 }

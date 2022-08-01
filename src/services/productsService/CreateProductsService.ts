@@ -23,8 +23,6 @@ class CreateProductService {
       quantity,
     });
 
-    await this.productsRepository.save(product); // se passar do if salva no banco de dados
-
     return product;
   }
 }
