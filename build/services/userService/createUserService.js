@@ -5,19 +5,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _bcryptjs = require("bcryptjs");
-
 var _tsyringe = require("tsyringe");
-
-var _typeorm = require("typeorm");
 
 var _errors = _interopRequireDefault(require("../../errors"));
 
 var _IHash = require("../../interface/IHash");
 
 var _IUsers = require("../../interface/IUsers");
-
-var _UsersRepository = require("../../repositories/UsersRepository");
 
 var _dec, _dec2, _dec3, _dec4, _dec5, _class;
 
@@ -38,21 +32,19 @@ let CreateUserService = (_dec = (0, _tsyringe.injectable)(), _dec2 = function (t
     email,
     password
   }) {
-    const userRepository = (0, _typeorm.getCustomRepository)(_UsersRepository.UserRepository);
     const emailExists = await this.usersRepository.findByEmail(email);
 
     if (emailExists) {
       throw new _errors.default('email address already used');
     }
 
-    const hashedPassword = await (0, _bcryptjs.hash)(password, 8); // criar criptografia para senha
+    const hashedPassword = await this.hashProvider.generateHash(password); // criar criptografia para senha
 
-    const user = userRepository.create({
+    const user = this.usersRepository.create({
       name,
       email,
       password: hashedPassword
     });
-    await userRepository.save(user);
     return user;
   }
 

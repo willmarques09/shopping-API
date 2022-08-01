@@ -15,7 +15,7 @@ class UsersAvatarController {
   async updateAvatar(req, res) {
     const updateAvatar = _tsyringe.container.resolve(_updateUserAvatarService.default);
 
-    const user = updateAvatar.updateAvatar({
+    const user = await updateAvatar.updateAvatar({
       id: req.user.id,
       avatar: req.file.filename
     });

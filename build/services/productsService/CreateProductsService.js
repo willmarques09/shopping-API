@@ -38,8 +38,6 @@ let CreateProductService = (_dec = (0, _tsyringe.injectable)(), _dec2 = function
       price,
       quantity
     });
-    await this.productsRepository.save(product); // se passar do if salva no banco de dados
-
     return product;
   }
 

@@ -24,7 +24,7 @@ let CreateOrderService = (_dec = (0, _tsyringe.injectable)(), _dec2 = function (
 }, _dec3 = function (target, key) {
   return (0, _tsyringe.inject)('CustomersRepository')(target, undefined, 1);
 }, _dec4 = function (target, key) {
-  return (0, _tsyringe.inject)('ProductsRepository')(target, undefined, 2);
+  return (0, _tsyringe.inject)('ProductRepository')(target, undefined, 2);
 }, _dec5 = Reflect.metadata("design:type", Function), _dec6 = Reflect.metadata("design:paramtypes", [typeof _IOrder.IOrdersRepository === "undefined" ? Object : _IOrder.IOrdersRepository, typeof _ICustomer.ICustomersRepository === "undefined" ? Object : _ICustomer.ICustomersRepository, typeof _IProducts.IProductsRepository === "undefined" ? Object : _IProducts.IProductsRepository]), _dec(_class = _dec2(_class = _dec3(_class = _dec4(_class = _dec5(_class = _dec6(_class = class CreateOrderService {
   constructor(ordersRepository, customRepository, productRepository) {
     this.ordersRepository = ordersRepository;
@@ -74,7 +74,7 @@ let CreateOrderService = (_dec = (0, _tsyringe.injectable)(), _dec2 = function (
       price: existsProducts.filter(p => p.id === product.id)[0].price
     })); // Passa os dados que precisa para criar o registro
 
-    const order = this.ordersRepository.create({
+    const order = await this.ordersRepository.create({
       customer: customerExists,
       products: serializedProducts
     });
@@ -86,7 +86,7 @@ let CreateOrderService = (_dec = (0, _tsyringe.injectable)(), _dec2 = function (
       id: product.product_id,
       quantity: existsProducts.filter(p => p.id === product.product_id)[0].quantity - product.quantity
     }));
-    await this.productRepository.save(updatedProductQuantity);
+    await this.productRepository.updateStock(updatedProductQuantity);
     return order;
   }
 
