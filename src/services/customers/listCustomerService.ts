@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
+import AppError from '../../errors';
 import { ICustomersRepository, ISearchParams } from '../../interface/ICustomer';
 
 @injectable()
@@ -18,6 +19,15 @@ class ListCustomerService {
       skip,
       take,
     });
+
+    return listCustom;
+  }
+  async listById(id: string) {
+    const listCustom = await this.customersRepository.findById(id);
+
+    if (!listCustom) {
+      throw new AppError('User not found', 404);
+    }
 
     return listCustom;
   }
